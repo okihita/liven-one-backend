@@ -167,8 +167,8 @@ func AuthMiddleware() gin.HandlerFunc {
 	}
 }
 
-// MerchantProtectedHandler Example protected route
-func MerchantProtectedHandler(c *gin.Context) {
+// MerchantAccountHandler Example protected route
+func MerchantAccountHandler(c *gin.Context) {
 	claimsInterface, userExists := c.Get("user_claims")
 
 	if !userExists {
@@ -190,7 +190,7 @@ func MerchantProtectedHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, userClaims)
 }
 
-func DinerProtectedHandler(c *gin.Context) {
+func DinerAccountHandler(c *gin.Context) {
 	claimsInterface, userExists := c.Get("user_claims")
 
 	if !userExists {
