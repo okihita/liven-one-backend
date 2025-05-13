@@ -2,10 +2,16 @@ package models
 
 import "golang.org/x/crypto/bcrypt"
 
+const (
+	UserTypeDiner    = "diner"
+	UserTypeMerchant = "merchant"
+)
+
 type User struct {
 	ID       uint   `json:"id" gorm:"primaryKey"`
 	Email    string `json:"email" gorm:"uniqueIndex;not null"`
-	Password string `json:"password" gorm:"not null"`
+	Password string `json:"-" gorm:"not null"`
+	UserType string `json:"user_type" gorm:"not null"`
 }
 
 // HashPassword hashes the user's password

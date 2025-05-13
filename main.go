@@ -31,7 +31,8 @@ func main() {
 	}
 
 	// Protected route example
-	router.GET("/protected", handlers.AuthMiddleware(), handlers.ProtectedHandler)
+	router.GET("/merchants", handlers.AuthMiddleware(), handlers.MerchantProtectedHandler)
+	router.GET("/diners", handlers.AuthMiddleware(), handlers.DinerProtectedHandler)
 
 	port := ":8080"
 	log.Printf("Server listening on port %s", port)

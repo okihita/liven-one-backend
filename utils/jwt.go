@@ -8,14 +8,16 @@ import (
 var jwtSecret = []byte("garuru-cannon")
 
 type Claims struct {
-	UserID uint `json:"user_id"`
+	UserID   uint   `json:"user_id"`
+	UserType string `json:"user_type"`
 	jwt.RegisteredClaims
 }
 
-func GenerateToken(userID uint) (string, error) {
+func GenerateToken(userID uint, userType string) (string, error) {
 
 	claims := Claims{
-		UserID: userID,
+		UserID:   userID,
+		UserType: userType,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 24)), // Token expires in 24 hours
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
@@ -37,6 +39,9 @@ func GenerateToken(userID uint) (string, error) {
 func ValidateToken(tokenString string) (*Claims, error) {
 	claims := &Claims{}
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, jwt.ErrSignatureInvalid
+		}
 		return jwtSecret, nil
 	})
 
