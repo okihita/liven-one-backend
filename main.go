@@ -22,7 +22,7 @@ func main() {
 	}
 	handlers.DB = db
 
-	migrateErr := db.AutoMigrate(&models.User{}, &models.Venue{})
+	migrateErr := db.AutoMigrate(&models.User{}, &models.Venue{}, &models.MenuItem{})
 	if migrateErr != nil {
 		log.Fatalf("Failed to migrate database: %v", openDbErr)
 	}
@@ -31,30 +31,47 @@ func main() {
 	/* ROUTING STARTS */
 	router := gin.Default()
 
-	// Authentication routes
+	// --- Authentication Routes ---
 	authGroup := router.Group("/auth")
 	{
 		authGroup.POST("/register", handlers.AuthHandler)
 		authGroup.POST("/login", handlers.AuthHandler)
 	}
 
-	// For diners and public listing
-	router.GET("/venues", handlers.ListVenuesHandler)
+	// --- Public/Diner Venue and Menu Routes ---
+	router.GET("/venues", handlers.AuthMiddleware(), handlers.ListVenuesHandler)
+	router.GET("/venues/:venue_id", handlers.AuthMiddleware(), handlers.GetVenueHandler)
+	router.GET("/venues/:venue_id/menu", handlers.AuthMiddleware(), handlers.GetVenueMenuForDinersHandler)
 
-	merchantRoutes := router.Group("/merchant")
+	// --- Merchant Protected Routes ---
+	merchantRoutes := router.Group("/merchant", handlers.AuthMiddleware())
 	{
+
+		// Account Management
 		merchantRoutes.GET("", handlers.AuthMiddleware(), handlers.MerchantAccountHandler)
-		merchantVenueRoutes := merchantRoutes.Group("/venues")
-		merchantVenueRoutes.Use(handlers.AuthMiddleware())
+
+		// Merchant Venue Management
+		venueRoutes := merchantRoutes.Group("/venues")
 		{
-			merchantVenueRoutes.POST("", handlers.CreateVenueHandler)
-			merchantVenueRoutes.GET("", handlers.GetMerchantVenuesHandler)
-			merchantVenueRoutes.GET("/:id", handlers.GetVenueHandler)
-			merchantVenueRoutes.PUT("/:id", handlers.UpdateVenueHandler)
-			merchantVenueRoutes.DELETE("/:id", handlers.DeleteVenueHandler)
+			venueRoutes.POST("", handlers.CreateVenueHandler)
+			venueRoutes.GET("", handlers.GetMerchantVenuesHandler) // Gets venues for the authenticated Merchant
+
+			venueRoutes.GET("/:venue_id", handlers.GetVenueHandler)
+			venueRoutes.PUT("/:venue_id", handlers.UpdateVenueHandler)
+			venueRoutes.DELETE("/:venue_id", handlers.DeleteVenueHandler)
+
+			// Merchant Menu Item Management (nested under specific venue)
+			menuItemRoutes := venueRoutes.Group("/:venue_id/menuitems", handlers.AuthMiddleware())
+			{
+				menuItemRoutes.POST("", handlers.CreateMenuItemHandler)
+				menuItemRoutes.GET("", handlers.GetMenuItemsForVenueHandler)
+				menuItemRoutes.PUT("/:item_id", handlers.UpdateMenuItemHandler)
+				menuItemRoutes.DELETE("/:item_id", handlers.DeleteMenuItemHandler)
+			}
 		}
 	}
 
+	// --- Diner Protected Routes ---
 	router.GET("/diners", handlers.AuthMiddleware(), handlers.DinerAccountHandler)
 
 	/* ROUTING ENDS */

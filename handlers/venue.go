@@ -104,17 +104,12 @@ func GetVenueHandler(c *gin.Context) {
 		return
 	}
 
-	venueId := c.Param("id")
+	venueId := c.Param("venue_id")
 
 	userClaimsInterface, _ := c.Get("user_claims")
 	if userClaimsInterface == nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "User authentication details not found"})
 		return
-	}
-
-	userClaims := userClaimsInterface.(*utils.Claims)
-	if userClaims.UserType != models.UserTypeMerchant {
-		c.JSON(http.StatusForbidden, gin.H{"error": "Only merchant can get venues."})
 	}
 
 	var venue models.Venue
@@ -130,11 +125,6 @@ func GetVenueHandler(c *gin.Context) {
 		return
 	}
 
-	if venue.MerchantID != userClaims.UserID {
-		c.JSON(http.StatusForbidden, gin.H{"error": "You don't own this venue"})
-		return
-	}
-
 	c.JSON(http.StatusOK, gin.H{"venue": venue})
 
 }
@@ -145,7 +135,7 @@ func UpdateVenueHandler(c *gin.Context) {
 		return
 	}
 
-	venueId := c.Param("id")
+	venueId := c.Param("venue_id")
 
 	var request UpdateVenueRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
@@ -202,7 +192,7 @@ func DeleteVenueHandler(c *gin.Context) {
 		return
 	}
 
-	venueId := c.Param("id")
+	venueId := c.Param("venue_id")
 	userClaimsInterface, _ := c.Get("user_claims")
 	if userClaimsInterface == nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "User authentication details not found"})
