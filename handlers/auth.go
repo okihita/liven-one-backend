@@ -9,6 +9,10 @@ import (
 	"strings"
 )
 
+const (
+	UserClaimsHandlerKey string = "user_claims"
+)
+
 var DB *gorm.DB
 
 // RegisterRequest struct to bind registration data
@@ -162,14 +166,14 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		c.Set("user_claims", claims)
+		c.Set(UserClaimsHandlerKey, claims)
 		c.Next()
 	}
 }
 
 // MerchantAccountHandler Example protected route
 func MerchantAccountHandler(c *gin.Context) {
-	claimsInterface, userExists := c.Get("user_claims")
+	claimsInterface, userExists := c.Get(UserClaimsHandlerKey)
 
 	if !userExists {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "User identification not found"})
@@ -191,7 +195,7 @@ func MerchantAccountHandler(c *gin.Context) {
 }
 
 func DinerAccountHandler(c *gin.Context) {
-	claimsInterface, userExists := c.Get("user_claims")
+	claimsInterface, userExists := c.Get(UserClaimsHandlerKey)
 
 	if !userExists {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "User identification not found"})

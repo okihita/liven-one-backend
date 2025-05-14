@@ -13,7 +13,7 @@ import (
 type CreateMenuItemRequest struct {
 	Name         string `json:"name" binding:"required"`
 	Description  string `json:"description" binding:"required"`
-	PriceInCents uint   `json:"price_in_cents" binding:"required,gt=0"`
+	PriceInCents int64  `json:"price_in_cents" binding:"required,gt=0"`
 	Category     string `json:"category" binding:"required"`
 }
 
@@ -31,7 +31,7 @@ func CheckVenueOwnership(c *gin.Context, venueIdString string) (*models.Venue, b
 		return nil, false
 	}
 
-	userClaimsInterface, _ := c.Get("user_claims")
+	userClaimsInterface, _ := c.Get(UserClaimsHandlerKey)
 	if userClaimsInterface == nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "User not recognized"})
 		return nil, false

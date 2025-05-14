@@ -39,7 +39,7 @@ func CreateVenueHandler(c *gin.Context) {
 	}
 
 	// Get authenticated user details from context
-	userClaimsInterface, _ := c.Get("user_claims")
+	userClaimsInterface, _ := c.Get(UserClaimsHandlerKey)
 	if userClaimsInterface == nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "User authentication details not found"})
 		return
@@ -74,7 +74,7 @@ func GetMerchantVenuesHandler(c *gin.Context) {
 		return
 	}
 
-	userClaimsInterface, _ := c.Get("user_claims")
+	userClaimsInterface, _ := c.Get(UserClaimsHandlerKey)
 	if userClaimsInterface == nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "User authentication details not found"})
 		return
@@ -106,7 +106,7 @@ func GetVenueHandler(c *gin.Context) {
 
 	venueId := c.Param("venue_id")
 
-	userClaimsInterface, _ := c.Get("user_claims")
+	userClaimsInterface, _ := c.Get(UserClaimsHandlerKey)
 	if userClaimsInterface == nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "User authentication details not found"})
 		return
@@ -143,7 +143,7 @@ func UpdateVenueHandler(c *gin.Context) {
 		return
 	}
 
-	userClaimsInterface, _ := c.Get("user_claims")
+	userClaimsInterface, _ := c.Get(UserClaimsHandlerKey)
 	if userClaimsInterface == nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "User authentication details not found"})
 		return
@@ -193,7 +193,7 @@ func DeleteVenueHandler(c *gin.Context) {
 	}
 
 	venueId := c.Param("venue_id")
-	userClaimsInterface, _ := c.Get("user_claims")
+	userClaimsInterface, _ := c.Get(UserClaimsHandlerKey)
 	if userClaimsInterface == nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "User authentication details not found"})
 		return
