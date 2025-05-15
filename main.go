@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/joho/godotenv"
 	"liven-one-go/handlers"
 	"liven-one-go/models"
 	"log"
@@ -14,8 +15,20 @@ import (
 func main() {
 
 	/* DATABASE SETUP STARTS */
+
+	err := godotenv.Load()
+	if err != nil {
+		log.Printf("Error loading .env file for database URI. Using environment variables.")
+	}
+
+	dbURI := os.Getenv("DATABASE_URI")
+	if dbURI == "" {
+		dbURI = "test.db"
+		log.Println("Warning: DATABASE_URI not found in environment variables. Using default: " + dbURI)
+	}
+
 	// Initialize database (replace with your actual database setup)
-	db, openDbErr := gorm.Open(sqlite.Open("liven.db"), &gorm.Config{})
+	db, openDbErr := gorm.Open(sqlite.Open(dbURI), &gorm.Config{})
 	if openDbErr != nil {
 		log.Fatalf("Failed to connect to database: %v", openDbErr)
 		os.Exit(1)
@@ -32,7 +45,7 @@ func main() {
 	router := gin.Default()
 
 	// --- Authentication Routes ---
-	authGroup := router.Group("/backend")
+	authGroup := router.Group("/auth")
 	{
 		authGroup.POST("/register", handlers.AuthHandler)
 		authGroup.POST("/login", handlers.AuthHandler)

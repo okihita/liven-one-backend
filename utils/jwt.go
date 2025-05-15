@@ -12,15 +12,20 @@ import (
 var jwtSecret []byte
 
 func init() {
-	if err := godotenv.Load(); err != nil {
-		log.Fatal("Error loading .env file")
+	// Attempt to load .env file. This is useful for local development.
+	// In a containerized environment (like Docker/Cloud Run),
+	// environment variables are typically set directly by the platform.
+	err := godotenv.Load()
+	if err != nil {
+		// Don't make this fatal. It's okay if .env is not found in a container.
+		log.Printf("Warning: .env file not found or error loading: %v. Relying on OS environment variables.", err)
 	}
 
 	secret := os.Getenv("JWT_SECRET")
 	if secret == "" {
-		log.Fatal("JWT_SECRET environment variable not set")
+		// This is a critical failure if the secret isn't set by any means
+		log.Fatal("FATAL: JWT_SECRET environment variable is not set.")
 	}
-
 	jwtSecret = []byte(secret)
 }
 

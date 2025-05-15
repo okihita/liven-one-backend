@@ -1,0 +1,32 @@
+# Git specific
+.git
+.gitignore
+.gitattributes
+
+# Go modules cache (if you vendor, you might keep vendor)
+# vendor/
+
+# IDE and editor specific
+.idea/
+.vscode/
+*.iml
+
+# Local environment files (should be configured via environment variables in Docker)
+.env
+*.env.local
+
+# Test files if you don't run tests inside Docker build for the final image
+# *_test.go
+
+# Binaries and build artifacts (we build inside Docker)
+*.exe
+*.out
+app
+
+# SQLite database file (if you don't want to include it in the image)
+test.db
+test.db-journal
+
+# Docker specific
+Dockerfile
+docker-compose.yml

@@ -35,9 +35,9 @@ func AuthHandler(context *gin.Context) {
 	}
 
 	switch context.Request.URL.Path {
-	case "/backend/register":
+	case "/auth/register":
 		register(context)
-	case "/backend/login":
+	case "/auth/login":
 		login(context)
 	default:
 		context.JSON(http.StatusNotFound, gin.H{"error": "Route not found"})
