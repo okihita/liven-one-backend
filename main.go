@@ -32,7 +32,7 @@ func main() {
 	router := gin.Default()
 
 	// --- Authentication Routes ---
-	authGroup := router.Group("/auth")
+	authGroup := router.Group("/backend")
 	{
 		authGroup.POST("/register", handlers.AuthHandler)
 		authGroup.POST("/login", handlers.AuthHandler)

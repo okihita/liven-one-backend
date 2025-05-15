@@ -35,9 +35,9 @@ func AuthHandler(context *gin.Context) {
 	}
 
 	switch context.Request.URL.Path {
-	case "/auth/register":
+	case "/backend/register":
 		register(context)
-	case "/auth/login":
+	case "/backend/login":
 		login(context)
 	default:
 		context.JSON(http.StatusNotFound, gin.H{"error": "Route not found"})
@@ -147,7 +147,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		const bearerPrefix = "Bearer "
 		var tokenString string
 
-		// Strips the "Bearer " prefix in token auth header
+		// Strips the "Bearer " prefix in token backend header
 		if strings.HasPrefix(authHeader, bearerPrefix) {
 			tokenString = strings.TrimPrefix(authHeader, bearerPrefix)
 		} else {
