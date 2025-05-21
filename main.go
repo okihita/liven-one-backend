@@ -51,10 +51,13 @@ func main() {
 		authGroup.POST("/login", handlers.AuthHandler)
 	}
 
-	// --- Public/Diner Venue and Menu Routes ---
-	router.GET("/venues", handlers.AuthMiddleware(), handlers.ListVenuesHandler)
-	router.GET("/venues/:venue_id", handlers.AuthMiddleware(), handlers.GetVenueHandler)
-	router.GET("/venues/:venue_id/menu", handlers.AuthMiddleware(), handlers.GetVenueMenuForDinersHandler)
+	// --- Public/Diner Venue and Menu Routes --- (Auth token not needed)
+	publicGroup := router.Group("/public")
+	{
+		publicGroup.GET("/venues", handlers.ListVenuesHandler)
+		publicGroup.GET("/venues/:venue_id", handlers.GetVenueHandler)
+		publicGroup.GET("/venues/:venue_id/menu", handlers.GetSingleVenueMenuHandler)
+	}
 
 	// --- Diner Protected Routes ---
 	dinerRoutes := router.Group("/diner", handlers.AuthMiddleware())
@@ -79,7 +82,7 @@ func main() {
 		venueRoutes := merchantRoutes.Group("/venues")
 		{
 			venueRoutes.POST("", handlers.CreateVenueHandler)
-			venueRoutes.GET("", handlers.GetMerchantVenuesHandler) // Gets venues for the authenticated Merchant
+			venueRoutes.GET("", handlers.GetSingleMerchantVenuesHandler) // Gets venues for the authenticated Merchant
 
 			venueRoutes.GET("/:venue_id", handlers.GetVenueHandler)
 			venueRoutes.PUT("/:venue_id", handlers.UpdateVenueHandler)

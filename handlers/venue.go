@@ -68,7 +68,7 @@ func CreateVenueHandler(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"venue": venue})
 }
 
-func GetMerchantVenuesHandler(c *gin.Context) {
+func GetSingleMerchantVenuesHandler(c *gin.Context) {
 	if DB == nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database connection not initialized"})
 		return
@@ -96,7 +96,6 @@ func GetMerchantVenuesHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"venues": venues})
 }
 
-// GetVenueHandler assumes a merchant will only manage one venue
 func GetVenueHandler(c *gin.Context) {
 
 	if DB == nil {

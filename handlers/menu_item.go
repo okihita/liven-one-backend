@@ -206,7 +206,7 @@ func DeleteMenuItemHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Deleted menu item"})
 }
 
-func GetVenueMenuForDinersHandler(c *gin.Context) {
+func GetSingleVenueMenuHandler(c *gin.Context) {
 	if DB == nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Database not initialized"})
 		return
