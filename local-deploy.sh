@@ -9,6 +9,7 @@ CONTAINER_NAME="liven-one-backend-container" # Replace with your desired contain
 ENV_FILE=".env" # Your environment file
 APP_PORT_HOST="8080" # Port on your host machine
 APP_PORT_CONTAINER="8080" # Port your Go app listens on INSIDE the container (should match EXPOSE in Dockerfile and PORT env var)
+APP_ENV="development" # Port your Go app listens on INSIDE the container (should match EXPOSE in Dockerfile and PORT env var)
 
 # --- Script Logic ---
 
@@ -96,6 +97,7 @@ fi
 
 # 4. Run the new Docker container
 echo "Running new container '$CONTAINER_NAME' from image '$IMAGE_NAME'..."
+echo "Environment Setting: '$APP_ENV'"
 echo "Host Port: $APP_PORT_HOST, Container Port: $APP_PORT_CONTAINER"
 echo "DATABASE_URI will be set from $ENV_FILE"
 echo "JWT_SECRET will be set from $ENV_FILE"
@@ -105,6 +107,7 @@ docker run -d \
     --name "$CONTAINER_NAME" \
     -p "$APP_PORT_HOST":"$APP_PORT_CONTAINER" \
     -e "PORT=$APP_PORT_CONTAINER" \
+    -e "APP_ENV=$APP_ENV" \
     -e "DATABASE_URI=$DB_URI_FROM_ENV" \
     -e "JWT_SECRET=$JWT_SECRET_FROM_ENV" \
     "$IMAGE_NAME"

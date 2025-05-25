@@ -6,7 +6,9 @@ import (
 	"liven-one-go/models"
 	"log"
 	"os"
+	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/sqlite" // Or your preferred database driver
 	"gorm.io/gorm"
@@ -43,6 +45,33 @@ func main() {
 
 	/* ROUTING STARTS */
 	router := gin.Default()
+
+	env := os.Getenv("APP_ENV")
+
+	var corsConfig cors.Config
+	if env == "debug" || os.Getenv("APP_ENV") == "development" {
+		// Development: Allow all origins
+		corsConfig = cors.Config{
+			AllowOrigins:     []string{"*"}, // Allows all origins
+			AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+			AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
+			ExposeHeaders:    []string{"Content-Length"},
+			AllowCredentials: true, // Be cautious with this in conjunction with AllowOrigins: "*"
+			MaxAge:           12 * time.Hour,
+		}
+	} else {
+		// Production: Be specific and secure
+		corsConfig = cors.Config{
+			AllowOrigins:     []string{"https://your-production-frontend.com"}, // Replace with your actual frontend domain
+			AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+			AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
+			ExposeHeaders:    []string{"Content-Length"},
+			AllowCredentials: true,
+			MaxAge:           12 * time.Hour,
+		}
+	}
+
+	router.Use(cors.New(corsConfig))
 
 	// --- Authentication Routes ---
 	authGroup := router.Group("/auth")
